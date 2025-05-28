@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import logger from "@/utils/logger";
 
 export const authOptions = {
     providers: [
@@ -9,6 +10,16 @@ export const authOptions = {
         }),
     ],
     secret: process.env.NEXTAUTH_SECRET,
+    events: {
+        signIn: async ({ user, account, profile }) => {
+            const timestamp = new Date();
+            logger.info(`User signed in: ${user.email} on ${timestamp.toDateString()} at ${timestamp.toTimeString()}`, {
+                email: user.email,
+                date: timestamp.toDateString(),
+                time: timestamp.toTimeString(),
+            });
+        },
+    },
 };
 
 const handler = NextAuth(authOptions);
